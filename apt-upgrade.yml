@@ -1,8 +1,8 @@
 ---
-- name: Upgrade all packages with sudo bash
+- name: Upgrade all packages with sudo
   hosts: all
   become: yes
   tasks:
-    - name: Run apt update and upgrade with sudo bash
-      shell: |
-        sudo bash -c 'apt update && apt upgrade -y'
+    - name: Run apt upgrade with sudo
+      apt:
+        upgrade: dist
