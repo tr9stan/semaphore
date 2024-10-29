@@ -1,8 +1,8 @@
 ---
-- name: Upgrade all packages
+- name: Update apt cache
   hosts: all
   become: yes
   tasks:
-    - name: Run apt upgrade
+    - name: Run apt update
       apt:
-        upgrade: dist
+        update_cache: yes
