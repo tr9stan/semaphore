@@ -1,8 +1,13 @@
 ---
-- name: Upgrade all packages with sudo bash
+- name: Upgrade all packages as root
   hosts: all
   become: yes
+  become_user: root
   tasks:
-    - name: Run apt update and upgrade with sudo bash
-      shell: |
-        sudo bash -c 'apt update && apt upgrade -y'
+    - name: Update package cache
+      apt:
+        update_cache: yes
+    
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
