@@ -1,0 +1,13 @@
+---
+- name: Upgrade all packages as root
+  hosts: all
+  become: yes
+  become_user: root
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+    
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
