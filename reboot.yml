@@ -1,5 +1,6 @@
 ---
 - name: Restart Ubuntu Server as root
+  hosts: all
   become: yes         # Enables privilege escalation to root user
   become_user: root   # Specifies that you want to become the root user
   tasks:
