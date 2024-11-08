@@ -1,6 +1,6 @@
 ---
 - name: Ensure cron is installed, schedule a reboot, and clean up after reboot
-  hosts: your_server  # Replace 'your_server' with the appropriate inventory name or IP address
+  hosts: all
   become: yes
   become_user: root
 
