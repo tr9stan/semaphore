@@ -1,6 +1,5 @@
 ---
 - name: Restart Ubuntu Server as root
-  hosts: your_server  # Replace 'your_server' with the appropriate inventory name or IP address
   become: yes         # Enables privilege escalation to root user
   become_user: root   # Specifies that you want to become the root user
   tasks:
