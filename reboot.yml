@@ -1,8 +1,45 @@
 ---
-- name: Restart Ubuntu Server as root
-  hosts: all
-  become: yes         # Enables privilege escalation to root user
-  become_user: root   # Specifies that you want to become the root user
+- name: Ensure cron is installed, schedule a reboot, and clean up after reboot
+  hosts: your_server  # Replace 'your_server' with the appropriate inventory name or IP address
+  become: yes
+  become_user: root
+
   tasks:
-    - name: Restart the server
-      command: /sbin/shutdown -r now
+    - name: Ensure cron package is installed
+      apt:
+        name: cron
+        state: present
+        update_cache: yes
+
+    - name: Schedule a reboot using cron
+      cron:
+        name: "Scheduled reboot"
+        minute: "{{ (ansible_date_time.minute | int + 15) % 60 }}"
+        hour: "{{ (ansible_date_time.hour | int + ((ansible_date_time.minute | int + 15) // 60)) }}"
+        job: "/sbin/shutdown -r now"
+
+    - name: Create a script to remove the cron job after reboot
+      copy:
+        dest: /etc/cron_removal.sh
+        content: |
+          #!/bin/bash
+          crontab -l | grep -v "Scheduled reboot" | crontab -
+
+    - name: Make the cron removal script executable
+      file:
+        path: /etc/cron_removal.sh
+        mode: '0755'
+
+    - name: Add cron removal script to /etc/rc.local
+      lineinfile:
+        path: /etc/rc.local
+        line: "/etc/cron_removal.sh"
+        state: present
+        insertafter: "exit 0"
+        create: yes
+
+    - name: Make /etc/rc.local executable
+      file:
+        path: /etc/rc.local
+        mode: '0755'
+        state: file
