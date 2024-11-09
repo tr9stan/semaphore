@@ -1,7 +1,8 @@
 ---
 - name: Run Proxmox Backup Server setup script on all hosts
   hosts: all
-  become: true
+  become: yes
+  become_user: root
   tasks:
     - name: Create the setup script on the remote host
       copy:
