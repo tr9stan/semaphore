@@ -1,5 +1,5 @@
 ---
-- name: Run Proxmox Backup Server setup script on all hosts
+- name: Run Proxmox Backup Server setup script on all hosts using Bullseye repository
   hosts: all
   become: yes
   become_user: root
@@ -11,42 +11,43 @@
           #!/bin/bash
           
           # Script to add Proxmox Backup Server repository (No-Subscription) without installing the client
-          
+          # Using Bullseye repository
+
           # Function to check if the script is run as root
           check_root() {
             if [ "$EUID" -ne 0 ]; then
-              echo "Please run as root (use sudo)"
+              echo "This script must be run as root. Exiting..."
               exit 1
             fi
           }
-          
+
           # Function to add the Proxmox GPG key
           add_gpg_key() {
             echo "Adding Proxmox GPG key..."
-            wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+            wget https://enterprise.proxmox.com/debian/proxmox-release-bullseye.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg
             if [ $? -ne 0 ]; then
               echo "Failed to add Proxmox GPG key."
               exit 1
             fi
             echo "Proxmox GPG key added successfully."
           }
-          
-          # Function to add the Proxmox Backup Server No-Subscription repository
+
+          # Function to add the Proxmox Backup Server No-Subscription repository (Bullseye)
           add_repository() {
-            echo "Adding Proxmox Backup Server No-Subscription repository..."
-            echo "deb [signed-by=/etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg] http://download.proxmox.com/debian/pbs bookworm pbs-no-subscription" | tee /etc/apt/sources.list.d/proxmox-backup-server.list
+            echo "Adding Proxmox Backup Server No-Subscription repository for Bullseye..."
+            echo "deb [signed-by=/etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg] http://download.proxmox.com/debian/pbs bullseye pbs-no-subscription" | tee /etc/apt/sources.list.d/proxmox-backup-server.list
             if [ $? -ne 0 ]; then
               echo "Failed to add Proxmox Backup Server repository."
               exit 1
             fi
             echo "Proxmox Backup Server No-Subscription repository added successfully."
           }
-          
+
           # Main script execution
           check_root
           add_gpg_key
           add_repository
-          
+
           echo "Proxmox Backup Server repository setup completed!"
         
         mode: '0755'
