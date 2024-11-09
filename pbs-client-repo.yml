@@ -4,6 +4,17 @@
   become: true
   become_user: root  # Explicitly become root user
   tasks:
+    - name: Download libssl1.1 package
+      ansible.builtin.get_url:
+        url: http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+        dest: /tmp/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
+    - name: Install libssl1.1 package
+      ansible.builtin.shell: |
+        dpkg -i /tmp/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+        apt-get install -f -y  # This will fix any missing dependencies
+      become: true
+
     - name: Create the setup script on the remote host
       ansible.builtin.copy:
         dest: /tmp/setup_proxmox_server_repo.sh
@@ -59,4 +70,9 @@
     - name: Clean up the script after execution
       ansible.builtin.file:
         path: /tmp/setup_proxmox_server_repo.sh
+        state: absent
+
+    - name: Clean up the libssl1.1 package
+      ansible.builtin.file:
+        path: /tmp/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
         state: absent
