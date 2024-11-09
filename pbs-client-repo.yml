@@ -72,6 +72,11 @@
         path: /tmp/setup_proxmox_server_repo.sh
         state: absent
 
+    - name: Update apt package lists after adding Proxmox repository
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600  # Cache is valid for 1 hour
+
     - name: Clean up the libssl1.1 package
       ansible.builtin.file:
         path: /tmp/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
