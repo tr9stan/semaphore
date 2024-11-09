@@ -1,11 +1,11 @@
 ---
-- name: Run Proxmox Backup Server setup script on all hosts using Bullseye repository
+- name: Run Proxmox Backup Server setup script as root on all hosts using Bullseye repository
   hosts: all
-  become: yes
-  become_user: root
+  become: true
+  become_user: root  # Explicitly become root user
   tasks:
     - name: Create the setup script on the remote host
-      copy:
+      ansible.builtin.copy:
         dest: /tmp/setup_proxmox_server_repo.sh
         content: |
           #!/bin/bash
@@ -35,7 +35,7 @@
           # Function to add the Proxmox Backup Server No-Subscription repository (Bullseye)
           add_repository() {
             echo "Adding Proxmox Backup Server No-Subscription repository for Bullseye..."
-            echo "deb [signed-by=/etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg] http://download.proxmox.com/debian/pbs-client bullseye main" | tee /etc/apt/sources.list.d/proxmox-backup-server.list
+            echo "deb [signed-by=/etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg] http://download.proxmox.com/debian/pbs bullseye pbs-no-subscription" | tee /etc/apt/sources.list.d/proxmox-backup-server.list
             if [ $? -ne 0 ]; then
               echo "Failed to add Proxmox Backup Server repository."
               exit 1
@@ -53,10 +53,10 @@
         mode: '0755'
 
     - name: Run the setup Proxmox Backup Server script
-      command: /tmp/setup_proxmox_server_repo.sh
+      ansible.builtin.shell: /tmp/setup_proxmox_server_repo.sh
       become: true
 
     - name: Clean up the script after execution
-      file:
+      ansible.builtin.file:
         path: /tmp/setup_proxmox_server_repo.sh
         state: absent
