@@ -35,7 +35,7 @@
           # Function to add the Proxmox Backup Server No-Subscription repository (Bullseye)
           add_repository() {
             echo "Adding Proxmox Backup Server No-Subscription repository for Bullseye..."
-            echo "deb [signed-by=/etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg] http://download.proxmox.com/debian/pbs bullseye pbs-no-subscription" | tee /etc/apt/sources.list.d/proxmox-backup-server.list
+            echo "deb [signed-by=/etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg] http://download.proxmox.com/debian/pbs-client bullseye main" | tee /etc/apt/sources.list.d/proxmox-backup-server.list
             if [ $? -ne 0 ]; then
               echo "Failed to add Proxmox Backup Server repository."
               exit 1
