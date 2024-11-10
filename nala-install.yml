@@ -18,21 +18,19 @@
       command: "ls /home"
       register: home_dirs
 
-    - name: Append aliases to .bashrc for each user
+    - name: Append alias lines to .bashrc for each user
       lineinfile:
-        path: "/home/{{ item }}/.bashrc"
-        line: "{{ alias_line }}"
+        path: "/home/{{ user }}/.bashrc"
+        line: "{{ item }}"
         create: yes
         state: present
         insertafter: EOF
-      with_items: "{{ home_dirs.stdout_lines }}"
+      with_items:
+        - "# package manager alias"
+        - "# apt was changed to apt# in /usr/bin to allow this command"
+        - "alias apt='nala'"
+        - "# The white space after the o in sudo is intentional"
+        - "alias sudo='sudo '"
       loop_control:
-        loop_var: item
-      vars:
-        alias_lines:
-          - "# package manager alias"
-          - "# apt was changed to apt# in /usr/bin to allow this command"
-          - "alias apt='nala'"
-          - "# The white space after the o in sudo is intentional"
-          - "alias sudo='sudo '"
-    
+        loop_var: user
+      with_items: "{{ home_dirs.stdout }}"
