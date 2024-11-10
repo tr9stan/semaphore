@@ -34,5 +34,5 @@
           - "# apt was changed to apt# in /usr/bin to allow this command"
           - "alias apt='nala'"
           - "# The white space after the o in sudo is intentional"
-          - "alias sudo='sudo'"
+          - "alias sudo='sudo '"
     
