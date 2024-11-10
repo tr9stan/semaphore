@@ -31,3 +31,10 @@
       loop: "{{ home_dirs.stdout_lines }}"
       loop_control:
         loop_var: user
+
+    - name: Source .bashrc to make aliases immediately available
+      shell: "source /home/{{ user }}/.bashrc"
+      loop: "{{ home_dirs.stdout_lines }}"
+      loop_control:
+        loop_var: user
+      ignore_errors: yes
