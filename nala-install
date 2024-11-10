@@ -1,0 +1,38 @@
+---
+- name: Install Nala and update .bashrc with aliases
+  hosts: all
+  become: true
+  become_user: root
+
+  tasks:
+    - name: Update the package index
+      apt:
+        update_cache: yes
+
+    - name: Install Nala package
+      apt:
+        name: nala
+        state: present
+
+    - name: Get a list of home directories
+      command: "ls /home"
+      register: home_dirs
+
+    - name: Append aliases to .bashrc for each user
+      lineinfile:
+        path: "/home/{{ item }}/.bashrc"
+        line: "{{ item }}"
+        create: yes
+      with_items:
+        - "# package manager alias"
+        - "# apt was changed to apt# in /usr/bin to allow this command"
+        - "alias apt='nala'"
+        - "# The white space after the o in sudo is intentional"
+        - "alias sudo='sudo '"
+      loop: "{{ home_dirs.stdout_lines }}"
+      ignore_errors: yes
+
+    - name: Reload .bashrc for each user
+      shell: "source /home/{{ item }}/.bashrc"
+      with_items: "{{ home_dirs.stdout_lines }}"
+      ignore_errors: yes
